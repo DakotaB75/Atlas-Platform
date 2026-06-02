@@ -177,6 +177,30 @@ It is a public engineering initiative created to demonstrate how modern Software
 - [ ] Reference Architecture v1
 
 ---
+
+## Platform Architecture
+
+```mermaid
+flowchart TD
+
+    Developer --> GitHub
+
+    GitHub --> GitHubActions
+
+    GitHubActions --> Terraform
+
+    Terraform --> Azure
+
+    Azure --> ContainerApps
+
+    ContainerApps --> PostgreSQL
+
+    ContainerApps --> Redis
+
+    ContainerApps --> AzureMonitor
+```
+---
+
 Building the next generation of Platform Engineering on Azure and AWS.
 
 </div>
