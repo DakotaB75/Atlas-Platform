@@ -1,0 +1,3 @@
+requests
+| where success == false
+| summarize Errors=count() by bin(timestamp, 5m)
