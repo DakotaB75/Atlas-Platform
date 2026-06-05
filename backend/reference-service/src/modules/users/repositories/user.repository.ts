@@ -19,6 +19,10 @@ export class TypeOrmUserRepository implements UserRepository {
         return await this.repository.findOne({ where: { id } });
     }
 
+    async findByEmail(email: string): Promise<User | null> {
+        return await this.repository.findOne({ where: { email } });
+    }
+
     async create(user: CreateUserInput): Promise<User> {
         return await this.repository.save(user);
     }

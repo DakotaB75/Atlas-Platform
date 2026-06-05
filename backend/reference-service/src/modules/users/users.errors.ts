@@ -11,3 +11,13 @@ export class UserNotFoundException extends BusinessException {
     );
   }
 }
+
+export class UserAlreadyExistsException extends BusinessException {
+  constructor(email: string) {
+    super(
+      ERROR_CODES.USER_ALREADY_EXISTS,
+      `User with email ${email} already exists`,
+      HttpStatus.CONFLICT,
+    );
+  }
+}
