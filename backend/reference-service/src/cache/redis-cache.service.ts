@@ -1,9 +1,10 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import { CacheService } from './cache.interfaces';
 
 @Injectable()
-export class RedisCacheService implements OnModuleDestroy {
+export class RedisCacheService implements CacheService, OnModuleDestroy {
   private readonly redis: Redis;
 
   constructor(private readonly configService: ConfigService) {
