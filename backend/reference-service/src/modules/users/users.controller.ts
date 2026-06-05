@@ -83,7 +83,7 @@ export class UsersController {
     type: ErrorResponseDto,
   })
   @ApiConflictResponse({
-    description: 'A user with the same email already exists.',
+    description: 'The requested email is already assigned to another user.',
     type: ErrorResponseDto,
     schema: {
       example: {

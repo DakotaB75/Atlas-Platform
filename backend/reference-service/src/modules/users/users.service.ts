@@ -54,6 +54,14 @@ export class UsersService {
     }
 
     async updateUser(id: number, user: UpdateUserInput): Promise<User> {
+        if (user.email) {
+            const userWithEmail = await this.userRepository.findByEmail(user.email);
+
+            if (userWithEmail && userWithEmail.id !== id) {
+                throw new UserAlreadyExistsException(user.email);
+            }
+        }
+
         const updatedUser = await this.userRepository.update(id, user);
 
         if(!updatedUser) {
