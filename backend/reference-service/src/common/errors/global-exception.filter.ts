@@ -4,9 +4,9 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { ApplicationLogger } from '../logging/application-logger.service';
 import { BusinessException } from './business.exception';
 import { ERROR_CODES } from './error-codes';
 
@@ -17,7 +17,7 @@ interface ErrorResponse {
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(GlobalExceptionFilter.name);
+  constructor(private readonly logger: ApplicationLogger) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -27,7 +27,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const errorResponse = this.getErrorResponse(exception);
 
     if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(errorResponse.errorMsg, exception instanceof Error ? exception.stack : undefined);
+      this.logger.error(
+        GlobalExceptionFilter.name,
+        errorResponse.errorMsg,
+        exception instanceof Error ? exception.stack : undefined,
+      );
     }
 
     response.status(statusCode).json(errorResponse);

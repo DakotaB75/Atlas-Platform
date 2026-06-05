@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { RedisCacheModule } from './cache/redis-cache.module';
 import { GlobalExceptionFilter } from './common/errors/global-exception.filter';
+import { RequestContextMiddleware } from './common/middleware/request-context.middleware';
+import { ObservabilityModule } from './common/observability/observability.module';
 import { validateEnv } from './config/env.validation';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './modules/health/health.module';
@@ -14,6 +16,7 @@ import { UsersModule } from './modules/users/users.module';
       isGlobal: true,
       validate: validateEnv,
     }),
+    ObservabilityModule,
     DatabaseModule,
     RedisCacheModule,
     HealthModule,
@@ -26,4 +29,8 @@ import { UsersModule } from './modules/users/users.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(RequestContextMiddleware).forRoutes('*');
+  }
+}

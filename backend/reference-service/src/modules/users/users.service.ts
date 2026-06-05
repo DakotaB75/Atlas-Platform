@@ -1,5 +1,6 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CACHE_SERVICE, type CacheService } from 'src/cache/cache.interfaces';
+import { ApplicationLogger } from 'src/common/logging/application-logger.service';
 import { UserAlreadyExistsException, UserNotFoundException } from './users.errors';
 import { UpdateUserInput, USER_REPOSITORY, type CreateUserInput, type User, type UserRepository } from './users.interfaces';
 
@@ -7,13 +8,14 @@ const USER_CACHE_TTL_SECONDS = 300;
 
 @Injectable()
 export class UsersService {
-    private readonly logger = new Logger(UsersService.name);
+    private readonly component = UsersService.name;
 
     constructor(
         @Inject(USER_REPOSITORY)
         private readonly userRepository: UserRepository,
         @Inject(CACHE_SERVICE)
-        private readonly cacheService: CacheService
+        private readonly cacheService: CacheService,
+        private readonly logger: ApplicationLogger,
     ) {}
 
     async findAllUsers(): Promise<User[]> {
@@ -87,7 +89,9 @@ export class UsersService {
         try {
             return await this.cacheService.get<User>(cacheKey);
         } catch {
-            this.logger.warn(`Could not read user from cache: ${cacheKey}`);
+            this.logger.warn(this.component, 'Could not read user from cache', {
+                cacheKey,
+            });
 
             return null;
         }
@@ -97,7 +101,9 @@ export class UsersService {
         try {
             await this.cacheService.set(cacheKey, user, USER_CACHE_TTL_SECONDS);
         } catch {
-            this.logger.warn(`Could not write user to cache: ${cacheKey}`);
+            this.logger.warn(this.component, 'Could not write user to cache', {
+                cacheKey,
+            });
         }
     }
 
@@ -105,7 +111,9 @@ export class UsersService {
         try {
             await this.cacheService.delete(cacheKey);
         } catch {
-            this.logger.warn(`Could not delete user from cache: ${cacheKey}`);
+            this.logger.warn(this.component, 'Could not delete user from cache', {
+                cacheKey,
+            });
         }
     }
 }
