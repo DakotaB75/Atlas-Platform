@@ -12,7 +12,7 @@ import { UsersModule } from './modules/users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: validateEnv,
+      validate: validateEnv,
     }),
     DatabaseModule,
     RedisCacheModule,
